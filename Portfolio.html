@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic Media | Video Editor Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Canvas for motion graphics */
+        #motion-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* Header & Navigation */
+        header {
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #fff, #aaa, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s infinite alternate;
+        }
+        
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
+                             0 0 30px rgba(255, 255, 255, 0.6),
+                             0 0 40px rgba(255, 255, 255, 0.4);
+            }
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        nav a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover:after {
+            width: 100%;
+        }
+        
+        /* Sections */
+        section {
+            padding: 5rem 10%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: #fff;
+        }
+        
+        /* About Section */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+        
+        /* Video Editing Section */
+        .video-editing-section {
+            margin: 3rem 0;
+        }
+        
+        .video-slider {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            height: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+        
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .slide video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .slide-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        }
+        
+        .slide-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .slide-description {
+            color: #ccc;
+            max-width: 600px;
+        }
+        
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .slider-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+        
+        /* Video Reels Section */
+        .reels-section {
+            margin: 5rem 0;
+        }
+        
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .reel-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 400px;
+            cursor: pointer;
+        }
+        
+        .reel-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .reel-card:hover video {
+            transform: scale(1.05);
+        }
+        
+        .reel-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .reel-card:hover .reel-info {
+            opacity: 1;
+        }
+        
+        /* Design Gallery */
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .design-item {
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .design-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .design-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .design-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .design-item:hover .design-info {
+            opacity: 1;
+        }
+        
+        /* Contact Section */
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover .contact-icon {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .submit-btn {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+        
+        .submit-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 4rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate {
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            section {
+                padding: 4rem 5%;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .reels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .design-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-slider {
+                height: 400px;
+            }
+            
+            .slide-title {
+                font-size: 1.5rem;
+            }
+            
+            .reel-card {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Motion Graphics Canvas -->
+    <canvas id="motion-canvas"></canvas>
+    
+    <header>
+        <h1 class="logo">Epic Media</h1>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#video-editing">Video Editing</a></li>
+                <li><a href="#reels">Reels</a></li>
+                <li><a href="#designs">Designs</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="about">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <p>At Epic Media, we specialize in creating visually stunning content that captivates audiences and tells compelling stories. With over 8 years of experience in video editing, we transform raw footage into cinematic masterpieces.</p>
+                <p>Our expertise spans cinematic edits, motion graphics, color grading, and visual effects. We blend technical precision with creative vision to deliver premium content that stands out in today's digital landscape.</p>
+            </div>
+        </section>
+        
+        <section id="video-editing">
+            <h2 class="section-title">Video Editing Portfolio</h2>
+            
+            <div class="video-editing-section">
+                <div class="video-slider">
+                    <div class="slider-container">
+                        <div class="slide">
+                            <video muted loop>
+                                <source src="https://player.vimeo.com/external/370331493.sd.mp4?s=ada720d5a6e2e9f5f5e3d2d3a5ae2e6e0e6e6e2e3&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                            </video>
+                            <div class="slide-overlay">
+                                <h3 class="slide-title">Cinematic Travel Film</h3>
+                                <p class="slide-description">A visually stunning travel video showcasing the beauty of Iceland with smooth transitions and dramatic color grading.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <video muted loop>
+                                <source src="https://player.vimeo.com/external/457462952.sd.mp4?s=abd2d5a6c9c3d7d847a38e770b4e2e6e0e6e6e2e3&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                            </video>
+                            <div class="slide-overlay">
+                                <h3 class="slide-title">Product Commercial</h3>
+                                <p class="slide-description">A sleek product showcase with dynamic editing, smooth motion graphics, and impactful sound design.</p>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <video muted loop>
+                                <source src="https://player.vimeo.com/external/327166690.sd.mp4?s=6a9dc786ebd5d2967d947e2c67e6e2e6e0e6e6e2e3&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                            </video>
+                            <div class="slide-overlay">
+                                <h3 class="slide-title">Documentary Style Editing</h3>
+                                <p class="slide-description">A documentary piece with thoughtful pacing, interview segments, and b-roll integration.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slider-controls">
+                    <button class="slider-btn prev-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="slider-btn next-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="slider-dots">
+                    <div class="dot active" data-index="0"></div>
+                    <div class="dot" data-index="1"></div>
+                    <div class="dot" data-index="2"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="reels">
+            <h2 class="section-title">Video Reels</h2>
+            
+            <div class="reels-section">
+                <div class="reels-grid">
+                    <div class="reel-card">
+                        <video muted loop>
+                            <source src="https://player.vimeo.com/external/370331493.sd.mp4?s=ada720d5a6e2e9f5f5e3d2d3a5ae2e6e0e6e6e2e3&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                        </video>
+                        <div class="reel-info">
+                            <h3>Cinematic Reel</h3>
+                            <p>Best of 2023</p>
+                        </div>
+                    </div>
+                    
+                    <div class="reel-card">
+                        <video muted loop>
+                            <source src="https://player.vimeo.com/external/457462952.sd.mp4?s=abd2d5a6c9c3d7d847a38e770b4e2e6e0e6e6e2e3&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                        </video>
+                        <div class="reel-info">
+                            <h3>Commercial Reel</h3>
+                            <p>Brand Campaigns</p>
+                        </div>
+                    </div>
+                    
+                    <div class="reel-card">
+                        <video muted loop>
+                            <source src="https://player.vimeo.com/external/327166690.sd.mp4?s=6a9dc786ebd5d2967d947e2c67e6e2e6e0e6e6e2e3&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                        </video>
+                        <div class="reel-info">
+                            <h3>Documentary Reel</h3>
+                            <p>Real Stories</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="designs">
+            <h2 class="section-title">Graphic Design Gallery</h2>
+            <div class="design-grid">
+                <div class="design-item">
+                    <img src="https://placehold.co/400x500/111111/FFFFFF/png?text=Brand+Identity" alt="Design 1">
+                    <div class="design-info">
+                        <h3>Brand Identity</h3>
+                        <p>Logo & Visual System</p>
+                    </div>
+                </div>
+                <div class="design-item">
+                    <img src="https://placehold.co/400x500/111111/FFFFFF/png?text=Poster+Design" alt="Design 2">
+                    <div class="design-info">
+                        <h3>Poster Series</h3>
+                        <p>Print Design</p>
+                    </div>
+                </div>
+                <div class="design-item">
+                    <img src="https://placehold.co/400x500/111111/FFFFFF/png?text=Social+Media" alt="Design 3">
+                    <div class="design-info">
+                        <h3>Social Campaign</h3>
+                        <p>Digital Graphics</p>
+                    </div>
+                </div>
+                <div class="design-item">
+                    <img src="https://placehold.co/400x500/111111/FFFFFF/png?text=Packaging" alt="Design 4">
+                    <div class="design-info">
+                        <h3>Packaging</h3>
+                        <p>Product Design</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span>contact@epicmedia.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <span>+1 (555) 123-4567</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span>Los Angeles, CA</span>
+                    </div>
+                    <div class="social-links">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <span>@epic_media</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fab fa-vimeo"></i>
+                            </div>
+                            <span>vimeo.com/epicmedia</span>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 Epic Media. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Canvas motion graphics
+        const canvas = document.getElementById('motion-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function setCanvasSize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
+        
+        // Motion lines parameters
+        const lines = [];
+        const lineCount = 20;
+        
+        // Initialize lines
+        for (let i = 0; i < lineCount; i++) {
+            lines.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                length: Math.random() * 100 + 50,
+                width: Math.random() * 2 + 0.5,
+                speed: Math.random() * 2 + 0.5,
+                opacity: Math.random() * 0.5 + 0.1,
+                angle: Math.random() * Math.PI * 2
+            });
+        }
+        
+        // Draw motion lines
+        function drawLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            lines.forEach(line => {
+                ctx.beginPath();
+                ctx.moveTo(line.x, line.y);
+                ctx.lineTo(
+                    line.x + Math.cos(line.angle) * line.length,
+                    line.y + Math.sin(line.angle) * line.length
+                );
+                ctx.strokeStyle = `rgba(255, 255, 255, ${line.opacity})`;
+                ctx.lineWidth = line.width;
+                ctx.stroke();
+                
+                // Update line position
+                line.x += Math.cos(line.angle) * line.speed;
+                line.y += Math.sin(line.angle) * line.speed;
+                
+                // Reset line if it goes off screen
+                if (line.x < -line.length || line.x > canvas.width + line.length ||
+                    line.y < -line.length || line.y > canvas.height + line.length) {
+                    line.x = Math.random() * canvas.width;
+                    line.y = Math.random() * canvas.height;
+                    line.angle = Math.random() * Math.PI * 2;
+                }
+            });
+            
+            requestAnimationFrame(drawLines);
+        }
+        
+        drawLines();
+        
+        // Video slider functionality
+        const sliderContainer = document.querySelector('.slider-container');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const dots = document.querySelectorAll('.dot');
+        
+        let currentSlide = 0;
+        const slideCount = slides.length;
+        
+        function goToSlide(index) {
+            if (index < 0) index = slideCount - 1;
+            if (index >= slideCount) index = 0;
+            
+            sliderContainer.style.transform = `translateX(-${index * 100}%)`;
+            currentSlide = index;
+            
+            // Update dots
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+        
+        prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+        nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+        
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.getAttribute('data-index'));
+                goToSlide(index);
+            });
+        });
+        
+        // Auto-play slides
+        setInterval(() => {
+            goToSlide(currentSlide + 1);
+        }, 5000);
+        
+        // Scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Form interaction
+        const formInputs = document.querySelectorAll('input, textarea');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', () => {
+                if (input.value === '') {
+                    input.parentElement.classList.remove('focused');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
